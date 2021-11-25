@@ -6,27 +6,27 @@ var _ = require('lodash');
 var glob = require('glob');
 var parseImports = require('./parse-imports');
 
-// resolve a sass module to a path
-function resolveSassPath(sassPath, loadPaths, extensions) {
+// resolve a js module to a path
+function resolveJsPath(filePath, loadPaths, extensions) {
   // trim sass file extensions
   var re = new RegExp('(\.('+extensions.join('|')+'))$', 'i');
-  var sassPathName = sassPath.replace(re, '');
+  var jsPathName = filePath.replace(re, '');
   // check all load paths
-  var i, j, length = loadPaths.length, scssPath, partialPath;
+  var i, j, length = loadPaths.length, jsPath, partialPath;
   for (i = 0; i < length; i++) {
     for (j = 0; j < extensions.length; j++) {
-      scssPath = path.normalize(loadPaths[i] + '/' + sassPathName + '.' + extensions[j]);
+      jsPath = path.normalize(loadPaths[i] + '/' + jsPathName + '.' + extensions[j]);
       try {
-        if (fs.lstatSync(scssPath).isFile()) {
-          return scssPath;
+        if (fs.lstatSync(jsPath).isFile()) {
+          return jsPath;
         }
       } catch (e) {}
     }
 
     // special case for _partials
     for (j = 0; j < extensions.length; j++) {
-      scssPath = path.normalize(loadPaths[i] + '/' + sassPathName + '.' + extensions[j]);
-      partialPath = path.join(path.dirname(scssPath), '_' + path.basename(scssPath));
+      jsPath = path.normalize(loadPaths[i] + '/' + jsPathName + '.' + extensions[j]);
+      partialPath = path.join(path.dirname(jsPath), '_' + path.basename(jsPath));
       try {
         if (fs.lstatSync(partialPath).isFile()) {
           return partialPath;
@@ -70,14 +70,13 @@ Graph.prototype.addFile = function(filepath, parent) {
   };
 
   var resolvedParent;
-  var isIndentedSyntax = path.extname(filepath) === '.sass';
-  var imports = parseImports(fs.readFileSync(filepath, 'utf-8'), isIndentedSyntax);
+  var imports = parseImports.parse(fs.readFileSync(filepath, 'utf-8'));
   var cwd = path.dirname(filepath);
 
   var i, length = imports.length, loadPaths, resolved;
   for (i = 0; i < length; i++) {
     loadPaths = _([cwd, this.dir]).concat(this.loadPaths).filter().uniq().value();
-    resolved = resolveSassPath(imports[i], loadPaths, this.extensions);
+    resolved = resolveJsPath(imports[i], loadPaths, this.extensions);
     if (!resolved) continue;
 
     // check exclcude regex
@@ -100,7 +99,7 @@ Graph.prototype.addFile = function(filepath, parent) {
       resolvedParent = parent;
     }
 
-    // check exclcude regex
+    // check exclude regex
     if (!(this.exclude !== null && this.exclude.test(resolvedParent))) {
       entry.importedBy.push(resolvedParent);
     }
@@ -145,7 +144,7 @@ Graph.prototype.visit = function(filepath, callback, edgeCallback, visited) {
 function processOptions(options) {
   return Object.assign({
     loadPaths: [process.cwd()],
-    extensions: ['scss', 'sass'],
+    extensions: ['js'],
   }, options);
 }
 

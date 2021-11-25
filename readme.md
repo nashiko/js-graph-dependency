@@ -1,19 +1,37 @@
-# Sass Graph
+# JS Graph Dependency
 
-Parses Sass files in a directory and exposes a graph of dependencies
+Parses JavaScript files in a directory and exposes a graph of dependencies.
 
-[![Build Status](https://travis-ci.org/xzyfer/sass-graph.svg?branch=master)](https://travis-ci.org/xzyfer/sass-graph)
-[![Coverage Status](https://coveralls.io/repos/github/xzyfer/sass-graph/badge.svg?branch=master)](https://coveralls.io/github/xzyfer/sass-graph?branch=master)
-[![npm version](https://badge.fury.io/js/sass-graph.svg)](http://badge.fury.io/js/sass-graph)
-[![Dependency Status](https://david-dm.org/xzyfer/sass-graph.svg?theme=shields.io)](https://david-dm.org/xzyfer/sass-graph)
-[![devDependency Status](https://david-dm.org/xzyfer/sass-graph/dev-status.svg?theme=shields.io)](https://david-dm.org/xzyfer/sass-graph#info=devDependencies)
-
-## Install
-
-Install with [npm](https://npmjs.org/package/sass-graph)
-
+Build a JS Graph of dependencies of files using:
 ```
-npm install --save-dev sass-graph
+Regex Test: https://regex101.com/
+Regex Code: parse-imports.js
+
+import defaultExport from "module-name";
+import * as name from 'module-name';
+import { export1 } from "module-name";
+import { export1 as alias1 } from "module-name";
+import { export1 , export2 } from "module-name";
+import { foo , bar } from "module-name/path/to/specific/un-exported/file";
+import { export1 , export2 as alias2 , [...] } from "module-name";
+import defaultExport, { export1 [ , [...] ] } from "module-name";
+import defaultExport, * as name from "module-name";
+import "module-name";
+var promise = import("module-name");
+import("module-name");
+
+import $ as name from "module-name";
+
+import {
+  something
+} from "./test/okbb"
+
+import{
+  something
+} from "./test/okbb"
+
+
+require("module-name");
 ```
 
 ## Usage
@@ -21,7 +39,7 @@ npm install --save-dev sass-graph
 Usage as a Node library:
 
 ```js
-var sassGraph = require('./sass-graph');
+var jsGraph = require('./js-graph-dependency');
 ```
 
 Usage as a command line tool:
@@ -29,8 +47,8 @@ Usage as a command line tool:
 The command line tool will parse a graph and then either display ancestors, descendents or both.
 
 ```
-$ ./bin/sassgraph --help
-Usage: bin/sassgraph <command> [options] <dir> [file]
+$ ./bin/jsgraph --help
+Usage: bin/jsgraph <command> [options] <dir> [file]
 
 Commands:
   ancestors    Output the ancestors
@@ -44,9 +62,17 @@ Options:
   -v, --version     Show version number
 
 Examples:
-  ./bin/sassgraph descendents test/fixtures test/fixtures/a.scss
-  /path/to/test/fixtures/b.scss
-  /path/to/test/fixtures/_c.scss
+  $ ./bin/jsgraph ancestors test test/fixtures/simple/nested/_d.js
+  /path/to/test/fixtures/simple/nested/c.js
+  /path/to/test/fixtures/simple/_b.js
+  /path/to/test/fixtures/simple/a.js
+  /path/to/test/fixtures/simple/index.js
+  
+  $ ./bin/jsgraph descendents test test/fixtures/simple/index.js
+  /path/to/test/fixtures/simple/a.js
+  /path/to/test/fixtures/simple/_b.js
+  /path/to/test/fixtures/simple/nested/c.js
+  /path/to/test/fixtures/simple/nested/_d.js
 ```
 
 ## API
@@ -90,40 +116,26 @@ Default: `undefined`
 Exclude files matching regular expression.
 
 ## Example
-
+See `test/index.js`.
 ```js
-var sassGraph = require('./sass-graph');
-console.log(sassGraph.parseDir('test/fixtures'));
+var jsGraph = require('./js-graph-dependency');
+console.dir(jsGraph.parseDir('test/fixtures/simple'));
 
 //{ index: {,
-//    '/path/to/test/fixtures/a.scss': {
-//        imports: ['b.scss'],
+//    '/path/to/test/fixtures/a.js': {
+//        imports: ['b.js'],
 //        importedBy: [],
 //    },
-//    '/path/to/test/fixtures/b.scss': {
-//        imports: ['_c.scss'],
-//        importedBy: ['a.scss'],
+//    '/path/to/test/fixtures/b.js': {
+//        imports: ['_c.js'],
+//        importedBy: ['a.js'],
 //    },
-//    '/path/to/test/fixtures/_c.scss': {
+//    '/path/to/test/fixtures/_c.js': {
 //        imports: [],
-//        importedBy: ['b/scss'],
+//        importedBy: ['b.js'],
 //    },
 //}}
 ```
-
-## Running Mocha tests
-
-You can run the tests by executing the following commands:
-
-```
-npm install
-npm test
-```
-
-## Authors
-
-Sass graph was originally written by [Lachlan Donald](http://lachlan.me).
-It is now maintained by [Michael Mifsud](http://twitter.com/xzyfer).
 
 ## License
 
