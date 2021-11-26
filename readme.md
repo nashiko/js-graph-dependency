@@ -34,12 +34,19 @@ import{
 require("module-name");
 ```
 
+## Install
+Install with npm
+```
+npm install --save-dev @nashiko/js-graph-dependency
+```
+
+
 ## Usage
 
 Usage as a Node library:
 
 ```js
-var jsGraph = require('./js-graph-dependency');
+var jsGraph = require('@nashiko/js-graph-dependency');
 ```
 
 Usage as a command line tool:

@@ -1,9 +1,12 @@
 {
-  "name": "js-graph-dependency",
+  "name": "@nashiko/js-graph-dependency",
   "version": "1.0.0",
   "description": "Parse JavaScript files and extract a graph of imports",
   "license": "MIT",
-  "repository": "nashiko/js-graph-dependency",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nashiko/js-graph-dependency.git"
+  },
   "author": "nashiko",
   "main": "js-graph-dependency.js",
   "directories": {

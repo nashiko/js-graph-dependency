@@ -5,4 +5,6 @@ test.js
 .nyc_output
 *.swp
 package-lock.json
-
+yarn.lock
+.idea
+.npmrc
