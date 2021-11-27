@@ -22,17 +22,6 @@ function resolveJsPath(filePath, loadPaths, extensions) {
         }
       } catch (e) {}
     }
-
-    // special case for _partials
-    for (j = 0; j < extensions.length; j++) {
-      jsPath = path.normalize(loadPaths[i] + '/' + jsPathName + '.' + extensions[j]);
-      partialPath = path.join(path.dirname(jsPath), '_' + path.basename(jsPath));
-      try {
-        if (fs.lstatSync(partialPath).isFile()) {
-          return partialPath;
-        }
-      } catch (e) {}
-    }
   }
 
   // File to import not found or unreadable so we assume this is a custom import
@@ -70,7 +59,7 @@ Graph.prototype.addFile = function(filepath, parent) {
   };
 
   var resolvedParent;
-  var imports = parseImports.parse(fs.readFileSync(filepath, 'utf-8'));
+  var imports = parseImports(fs.readFileSync(filepath, 'utf-8'));
   var cwd = path.dirname(filepath);
 
   var i, length = imports.length, loadPaths, resolved;
@@ -144,7 +133,7 @@ Graph.prototype.visit = function(filepath, callback, edgeCallback, visited) {
 function processOptions(options) {
   return Object.assign({
     loadPaths: [process.cwd()],
-    extensions: ['js'],
+    extensions: ['js', 'ts'],
   }, options);
 }
 

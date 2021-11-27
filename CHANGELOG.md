@@ -12,6 +12,14 @@ All notable changes to this project will be documented in this file.
 
 ### Dependencies
 
+## [1.1.0]
+- Changed the parsing package to lydell/js-tokens
+
+
+## [1.0.0] js-graph-dependency
+- Fork xzyfer/sass-graph@3.0.5
+- Code modification for JS
+
 ## [3.0.5]
 ### Fixes
 
